@@ -1,5 +1,3 @@
-
-
 const { response } = require("express");
 const rp = require("request-promise");
 const { Telegraf } = require("telegraf");
@@ -25,7 +23,7 @@ async function coinmarket(symbol) {
         return response;
       })
       .catch((err) => {
-        console.log('API call error:', err.message);
+        console.log("API call error:", err.message);
         return "error";
       });
 
@@ -104,52 +102,62 @@ bot.command("contract", async (ctx) => {
             "Проверь правильность ввода и повтори попытку"
         );
       } else {
-      if (network_name == "Ethereum" || network_name == "Erc20") {
-        network_name = "Ethereum";
-      } else if (network_name == "Binance" || network_name == "Bep20") {
-        network_name = "Binance Smart Chain (BEP20)";
-      }
+        if (network_name == "Ethereum" || network_name == "Erc20") {
+          network_name = "Ethereum";
+        } else if (network_name == "Binance" || network_name == "Bep20") {
+          network_name = "Binance Smart Chain (BEP20)";
+        }
 
-      try {
-        let str = "";
-        resp.data[symbol].contract_address.forEach((element) => {
-          if (element.platform.name == network_name) {
-            str = element.contract_address;
+        try {
+          let str = "";
+          resp.data[symbol].contract_address.forEach((element) => {
+            if (element.platform.name == network_name) {
+              str = element.contract_address;
+            }
+          });
+          if (str == "") {
+            ctx.reply(
+              "Что-то пошло не так :(" +
+                "\n" +
+                "Проверь правильность ввода и повтори попытку"
+            );
+          } else {
+            ctx.reply(str);
           }
-        });
-        if (str == "") {
+        } catch (e) {
+          console.log(e);
           ctx.reply(
             "Что-то пошло не так :(" +
               "\n" +
               "Проверь правильность ввода и повтори попытку"
           );
-        } else {
-          ctx.reply(str);
         }
-      } catch (e) {
-        console.log(e);
-        ctx.reply(
-          "Что-то пошло не так :(" +
-            "\n" +
-            "Проверь правильность ввода и повтори попытку"
-        );
-      }}
+      }
     }
   } catch (e) {
     console.log(e);
   }
 });
 
-let simply_answer = ['На каком это языке? ', 'Не понял :( ' , '🤷‍♂️', 
-'🤕','🤔','😴','🤐','🤯']
+let simply_answer = [
+  "На каком это языке? ",
+  "Не понял :( ",
+  "🤷‍♂️",
+  "🤕",
+  "🤔",
+  "😴",
+  "🤐",
+  "🤯",
+];
 
 function randomInteger(min, max) {
-    let rand = min - 0.5 + Math.random() * (max - min + 1);
-    return Math.round(rand);
-  }
-  
- bot.on('text', async (ctx) => {await ctx.reply(simply_answer[randomInteger(0, simply_answer.length-1)]) ;
-    await ctx.reply('Чтобы понять как со мной общаться используй /help')
-    })
+  let rand = min - 0.5 + Math.random() * (max - min + 1);
+  return Math.round(rand);
+}
+
+bot.on("text", async (ctx) => {
+  await ctx.reply(simply_answer[randomInteger(0, simply_answer.length - 1)]);
+  await ctx.reply("Чтобы понять как со мной общаться используй /help");
+});
 
 bot.launch();
