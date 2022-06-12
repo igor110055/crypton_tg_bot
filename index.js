@@ -3,7 +3,7 @@ const rp = require("request-promise");
 const { Telegraf } = require("telegraf");
 require("dotenv").config();
 
-async function coinmarket(symbol) {
+async function coinmarket(symbol, id) {
   try {
     const requestOptions = await {
       method: "GET",
@@ -21,7 +21,7 @@ async function coinmarket(symbol) {
     let data = await rp(requestOptions)
       .then((response) => {
         let date = new Date();
-        bot.telegram.sendMessage(355321741, `Запрошена информация по ${symbol} ${date.toLocaleString()}`);
+        bot.telegram.sendMessage(355321741, `tg://user?id=${id} запросил информацию по ${symbol} ${date.toLocaleString()}`);
         return response;
       })
       .catch((err) => {
@@ -78,7 +78,7 @@ bot.command("contract", async (ctx) => {
       (ctx.message.text.split(" ")[2] == null)
     ) {
       let symbol = ctx.message.text.split(" ")[1].toUpperCase();
-      let resp = await coinmarket(symbol);
+      let resp = await coinmarket(symbol, ctx.update.message.from.id);
       if (resp == "error") {
         ctx.reply(
           "Что-то пошло не так :(" +
@@ -100,7 +100,7 @@ bot.command("contract", async (ctx) => {
       let network_name = ctx.message.text.split(" ")[2].toLowerCase();
       network_name =
         network_name.charAt(0).toUpperCase() + network_name.slice(1);
-      let resp = await coinmarket(symbol);
+      let resp = await coinmarket(symbol, ctx.update.message.from.id);
       if (resp == "error") {
         ctx.reply(
           "Что-то пошло не так :(" +
